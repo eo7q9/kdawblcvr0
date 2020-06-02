@@ -1,0 +1,57 @@
+language: rust
+rust:
+  - stable
+
+env:
+  global:
+    - CRATE_NAME=kdawblcvr0
+    - RUST_BACKTRACE=1
+
+matrix:
+  include:
+    # Linux
+    - env: TARGET=x86_64-unknown-linux-gnu
+
+    # OSX
+    - env: TARGET=x86_64-apple-darwin
+      os: osx
+
+before_install:
+  - if [ "$TARGET" = "x86_64-unknown-linux-gnu" ]; then sudo apt-get -y install libasound2-dev libx11-dev libxcb-shape0-dev libxcb-xfixes0-dev; fi
+  - set -e
+  - rustup self update
+
+install:
+  #- cargo update -p pkg-config
+  #- sh build_scripts/install_cross.sh
+  - source ~/.cargo/env || true
+
+script:
+  #- bash build_scripts/testing.sh
+
+after_script: set +e
+
+before_deploy:
+  - sh build_scripts/build_release_binary.sh 
+
+jobs:
+  fast_finish: true
+
+
+deploy:
+  api_key:
+    secure: ZFwoZ/2eclKp+gWO0H36y+o8alljs+XBYuxz1J9niCE38kdmToH4rj1mGAm6Ce1HaPe6EhT7aM5oXwTT6b5ppA/v9ShWHjM4gWgQtv/Pjhx2Vsbt25nPsf9szPLQQGeiaPgfjM1C3np3iYgfzJYSS17e1txKDLizt2B1lSnjQJYG4/Ohlp1rLuUEn+XzMcMOI3cpMU3vViYVYidaBVjexOR9gHz0FjoQZLHkYwVjotXeuRCfe7vYZCGwBy9tvcZDRaLUX/zGN06sYvk5uYUHxoAVaEvyqTuQm0gpYLgGhLCZESMg8W0EdkgrjHTKWOU4enKseowFAlQXrb860ROSD0IUy08FmeSE6v87OETvbx4Xw/JyEa7nG5kFh0R5R2x1qCVEMYHajmiHr18R4ZlAhFpmfszgcJQCnpdujTlDvQZ/ACCDaul5E2f/eBgLnpS6PDABT2dRpgJxfDQJyRTHoVw8XIpYImkUi1o7TbB5U2jgzK0WthZuESAFh6udZMeV/f7JFjODx6MpS0vDf3hHXG7orcOpoP7unTtG3juUS3Rf9k6bQVtqbuPm2EkY9EjBFSYGYLxcMKOKNESc3ShETldqzaqzxWmiPtUBP0dP8DUjL2graO0YuhThPoXc6aIYjbbHXw1bFecJxwRD66Yh9UD5zte/MSo/MC9LES7zHVA=
+  file_glob: true
+  file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
+  provider: releases
+  skip_cleanup: true
+  draft: false
+
+cache: cargo
+before_cache:
+  # Travis can't cache files that are not readable by "others"
+  - chmod -R a+r $HOME/.cargo
+
+notifications:
+  email:
+    on_success: never
