@@ -2,6 +2,8 @@
 
 set -ex
 
+export TRAVIS_TAG=$GIT_TAG
+
 main() {
     local src=$(pwd) \
           stage=
