@@ -1,6 +1,22 @@
 [package]
-name = "kdawblcvr0"
-version = "0.1.0"
-authors = ["lili"]
+name = "bouncyquencer"
+version = "0.5.1"
+authors = ["user"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+nannou = "0.14"
+nannou_osc = "0.14.0"
+rand = "0.7.3"
+fudi-rs = { git = "https://github.com/tpltnt/fudi-rs" }
+midir = "0.5.0"
+wmidi = "3.1.0"
+serde = "1.0"
+serde_json = "1.0"
+
+[target.'cfg(windows)'.dependencies]
+winapi = "0.3.8"
+user32-sys = "0.2.0"
+kernel32-sys = "0.2.2"
